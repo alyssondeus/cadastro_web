@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar Pessoas | Sistema CRUD</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            
+            /* NOVO FUNDO DE IMAGEM RELACIONADO À TECNOLOGIA */
+            background-image: url("{{ url_for('static', filename='img/fundo_tech.jpg') }}");
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            
+            color: #333; 
+            padding: 40px; 
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); }
+        h1 { color: #444; text-align: center; margin-bottom: 25px; font-size: 28px; }
+        
+        /* Navegação */
+        .nav-link { text-align: center; margin-bottom: 20px; }
+        .nav-link a { color: #6a11cb; text-decoration: none; font-weight: 600; padding: 8px 15px; border-radius: 4px; transition: background-color 0.3s; }
+        .nav-link a:hover { background-color: #f0f0f0; }
+
+        /* Formulário de Busca */
+        .search-form { display: flex; align-items: center; justify-content: center; margin-bottom: 30px; }
+        .search-form input[type="text"] { padding: 10px; border: 1px solid #ccc; border-radius: 6px 0 0 6px; box-sizing: border-box; width: 300px; }
+        .search-form button { 
+            background-color: #28a745; color: white; padding: 10px 15px; 
+            border: none; border-radius: 0 6px 6px 0; cursor: pointer; 
+            font-weight: bold; transition: background-color 0.3s;
+        }
+        .search-form button:hover { background-color: #218838; }
+
+        /* Tabela */
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 20px; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: #007bff; color: white; font-weight: bold; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:hover td { background-color: #e6f7ff; }
+
+        /* Botões de Ação */
+        .action-link { color: #2575fc; text-decoration: none; font-weight: 600; margin-right: 10px; }
+        .action-link:hover { text-decoration: underline; }
+        .excluir-selecionados-btn { 
+            background-color: #dc3545; color: white; padding: 10px 20px; 
+            border: none; border-radius: 6px; cursor: pointer; margin-top: 25px; 
+            font-size: 16px; font-weight: bold; transition: background-color 0.3s;
+        }
+        .excluir-selecionados-btn:hover { background-color: #c82333; }
+
+        /* Mensagens */
+        .message.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+        .message.info { background-color: #cce5ff; color: #004085; border: 1px solid #b8daff; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔍 Buscar Pessoas Cadastradas</h1>
+            
+            <div class="nav-link"><a href="{{ url_for('index') }}">← Voltar para Cadastro</a></div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="message {{ category }}">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="GET" action="{{ url_for('buscar') }}" class="search-form">
+                <input type="text" name="query" placeholder="Buscar por nome (parcial)" value="{{ query if query else '' }}">
+                <button type="submit">Buscar</button>
+            </form>
+
+            {% if resultados %}
+            <form method="POST" action="{{ url_for('deletar_selecionados') }}"
+                  onsubmit="return confirm('Tem certeza que deseja excluir os registros selecionados?')"
+                  class="delete-form">
+
+                <input type="hidden" name="query_origem" value="{{ query if query else '' }}">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sel.</th> 
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Telefone</th>
+                            <th>Cidade</th>
+                            <th>Ações</th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pessoa in resultados %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="selecionados" value="{{ pessoa[0] }}">
+                            </td>
+                            <td>{{ pessoa[0] }}</td>
+                            <td>{{ pessoa[1] }}</td>
+                            <td>{{ pessoa[3] }}</td>
+                            <td>{{ pessoa[4] }}</td>
+                            <td>{{ pessoa[5] }}</td>
+                            <td>
+                                <a href="{{ url_for('editar', id=pessoa[0]) }}" class="action-link">Editar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                <button type="submit" class="excluir-selecionados-btn">EXCLUIR SELECIONADOS</button>
+            </form>
+            {% elif query and not resultados %}
+                <p style="text-align: center; color: gray; margin-top: 30px;">Nenhum registro encontrado.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Novo Cadastro | Sistema CRUD</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            
+            /* NOVO FUNDO DE IMAGEM RELACIONADO À TECNOLOGIA */
+            background-image: url("{{ url_for('static', filename='img/fundo_tech.jpg') }}");
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            
+            color: #333; 
+            padding: 40px; 
+        }
+        .container { max-width: 650px; margin: 0 auto; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); }
+        h1 { color: #444; text-align: center; margin-bottom: 25px; font-size: 28px; }
+        .icon { font-size: 32px; display: block; text-align: center; margin-bottom: 10px; color: #2575fc; }
+        label { display: block; margin-top: 15px; font-weight: 600; color: #555; }
+        input[type="text"], input[type="email"] { 
+            width: 100%; padding: 12px; margin-top: 5px; 
+            border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; 
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, input[type="email"]:focus { border-color: #6a11cb; outline: none; }
+        .btn-primary { 
+            background-color: #2575fc; color: white; padding: 12px 15px; 
+            border: none; border-radius: 6px; cursor: pointer; margin-top: 30px; 
+            width: 100%; font-size: 16px; font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover { background-color: #6a11cb; }
+        .nav-link { text-align: center; margin-top: 20px; font-size: 14px; }
+        .nav-link a { color: #2575fc; text-decoration: none; font-weight: 600; }
+        
+        .message.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+        .message.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <span class="icon">👤</span>
+            <h1>Novo Cadastro</h1>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="message {{ category }}">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <label for="nome">Nome Completo:</label>
+                <input type="text" id="nome" name="nome" required>
+
+                <label for="email">E-mail (Obrigatório):</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="idade">Idade:</label>
+                <input type="text" id="idade" name="idade">
+
+                <label for="telefone">Telefone:</label>
+                <input type="text" id="telefone" name="telefone">
+
+                <label for="cidade">Cidade/Estado:</label>
+                <input type="text" id="cidade" name="cidade">
+
+                <button type="submit" class="btn-primary">CADASTRAR</button>
+            </form>
+            <div class="nav-link"><a href="{{ url_for('buscar') }}">Ir para Busca de Registros</a></div>
+        </div>
+    </div>
+</body>
+</html>
